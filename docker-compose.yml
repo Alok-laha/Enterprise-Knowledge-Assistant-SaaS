@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: knowledge-assistant-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: alok
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: knowledge_assistant
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alok -d knowledge_assistant"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
