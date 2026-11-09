@@ -1,23 +1,16 @@
-from fastapi import FastAPI, Depends
-import os
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
+from fastapi import Depends, FastAPI
+from sqlalchemy import text
 
-load_dotenv()
-
-DATABASE_URL = os.getenv(
-    "DATABASE_URL", 
-    "postgresql://myuser:mypassword@localhost:5432/mydb"
-)
-
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+from app.api.v1.tenants import router as tenants_router
+from app.db.database import get_db
 
 app = FastAPI(
     title="Enterprise Knowledge Assistant",
     version="1.0.0"
 )
+
+app.include_router(tenants_router, prefix="/api/v1")
+
 
 @app.get("/health")
 async def health_check():
@@ -26,12 +19,6 @@ async def health_check():
         "message": "The Enterprise Knowledge Assistant API is running smoothly."
     }
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @app.get("/health/db")
 def test_db(db=Depends(get_db)):
