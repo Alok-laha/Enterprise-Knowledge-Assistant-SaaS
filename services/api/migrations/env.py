@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, pool
 
 from app.db.base import Base
-from app.models import tenant, user
+from app.models import document, tenant, user
 
 config = context.config
 
